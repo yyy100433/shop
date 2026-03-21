@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<configuration>
+    <property name="LOG_PATH" value="logs"/>
+    <property name="LOG_PATTERN" value="%d{yyyy-MM-dd HH:mm:ss.SSS} %5p ${PID:-} --- [%t] %c{1.15} : %m%n"/>
+
+    <appender name="FILE" class="ch.qos.logback.core.rolling.RollingFileAppender">
+        <file>${LOG_PATH}/shop.log</file>
+        <rollingPolicy class="ch.qos.logback.core.rolling.SizeAndTimeBasedRollingPolicy">
+            <!-- 按天和序号生成归档文件 -->
+            <fileNamePattern>${LOG_PATH}/shop.%d{yyyy-MM-dd}.%i.log</fileNamePattern>
+            <!-- 保留1天日志，超过自动删除 -->
+            <maxHistory>1</maxHistory>
+            <!-- 单个文件最大100MB -->
+            <maxFileSize>100MB</maxFileSize>
+            <!-- 日志总大小上限1GB -->
+            <totalSizeCap>1GB</totalSizeCap>
+            <!-- 项目启动时清理过期日志 -->
+            <cleanHistoryOnStart>true</cleanHistoryOnStart>
+        </rollingPolicy>
+        <encoder>
+            <pattern>${LOG_PATTERN}</pattern>
+            <charset>UTF-8</charset>
+            <immediateFlush>true</immediateFlush>
+        </encoder>
+    </appender>
+
+    <root level="INFO">
+        <appender-ref ref="FILE"/>
+    </root>
+</configuration>
