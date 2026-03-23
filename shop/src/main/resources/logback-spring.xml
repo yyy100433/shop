@@ -1,19 +1,30 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <configuration>
-    <property name="LOG_PATH" value="logs"/>
+    <!-- 日志路径：使用相对路径，在项目根目录下生成 logs 文件夹 -->
+    <property name="LOG_PATH" value="./logs"/>
+    <property name="LOG_FILE" value="shop"/>
     <property name="LOG_PATTERN" value="%d{yyyy-MM-dd HH:mm:ss.SSS} %5p ${PID:-} --- [%t] %c{1.15} : %m%n"/>
 
+    <!-- 控制台输出 -->
+    <appender name="CONSOLE" class="ch.qos.logback.core.ConsoleAppender">
+        <encoder>
+            <pattern>${LOG_PATTERN}</pattern>
+            <charset>UTF-8</charset>
+        </encoder>
+    </appender>
+
+    <!-- 文件输出（按天和大小分割） -->
     <appender name="FILE" class="ch.qos.logback.core.rolling.RollingFileAppender">
-        <file>${LOG_PATH}/shop.log</file>
+        <file>${LOG_PATH}/${LOG_FILE}.log</file>
         <rollingPolicy class="ch.qos.logback.core.rolling.SizeAndTimeBasedRollingPolicy">
             <!-- 按天和序号生成归档文件 -->
-            <fileNamePattern>${LOG_PATH}/shop.%d{yyyy-MM-dd}.%i.log</fileNamePattern>
-            <!-- 保留1天日志，超过自动删除 -->
-            <maxHistory>1</maxHistory>
+            <fileNamePattern>${LOG_PATH}/${LOG_FILE}.%d{yyyy-MM-dd}.%i.log</fileNamePattern>
+            <!-- 保留30天日志 -->
+            <maxHistory>7</maxHistory>
             <!-- 单个文件最大100MB -->
             <maxFileSize>100MB</maxFileSize>
-            <!-- 日志总大小上限1GB -->
-            <totalSizeCap>1GB</totalSizeCap>
+            <!-- 日志总大小上限5GB -->
+            <totalSizeCap>5GB</totalSizeCap>
             <!-- 项目启动时清理过期日志 -->
             <cleanHistoryOnStart>true</cleanHistoryOnStart>
         </rollingPolicy>
@@ -24,7 +35,29 @@
         </encoder>
     </appender>
 
-    <root level="INFO">
+    <!-- 异步输出（提升性能，可选） -->
+    <appender name="ASYNC_FILE" class="ch.qos.logback.classic.AsyncAppender">
         <appender-ref ref="FILE"/>
+        <queueSize>512</queueSize>
+        <discardingThreshold>0</discardingThreshold>
+        <includeCallerData>false</includeCallerData>
+    </appender>
+
+    <!-- ========== 日志级别配置 ========== -->
+    <!-- 项目包日志级别 -->
+    <logger name="com.chinahitech.shop" level="INFO"/>
+    <logger name="com.chinahitech.shop.mapper" level="WARN"/>
+
+    <!-- 第三方框架日志级别 -->
+    <logger name="org.springframework.kafka" level="INFO"/>
+    <logger name="org.elasticsearch.client" level="WARN"/>
+    <logger name="org.apache.kafka" level="WARN"/>
+    <logger name="org.springframework.data.redis" level="INFO"/>
+    <logger name="org.springframework.jdbc" level="ERROR"/>
+
+    <!-- 根日志级别 -->
+    <root level="INFO">
+        <appender-ref ref="CONSOLE"/>
+        <appender-ref ref="ASYNC_FILE"/>
     </root>
 </configuration>

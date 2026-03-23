@@ -53,7 +53,7 @@ public class KafkaService {
 
                         BrandDocument document = new BrandDocument(brand, categoryName);
                         brandDocumentRepository.save(document);
-                        System.out.println("品牌数据同步到ES成功: id=" + id);
+//                        System.out.println("品牌数据同步到ES成功: id=" + id);
                     }
                     break;
 
@@ -86,7 +86,7 @@ public class KafkaService {
                     if (category != null) {
                         CategoryDocument document = new CategoryDocument(category);
                         categoryDocumentRepository.save(document);
-                        System.out.println("分类数据同步到ES成功: id=" + id);
+//                        System.out.println("分类数据同步到ES成功: id=" + id);
                     }
                     break;
 
